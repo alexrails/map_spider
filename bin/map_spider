@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/map_spider'
+require 'dotenv/load'
+
+begin
+  MapSpider.new.start
+rescue => e
+  puts "Ошибка: #{e.message}".colorize(:red)
+  puts "Stack trace: #{e.backtrace.join("\n")}".colorize(:red)
+  exit 1
+end
