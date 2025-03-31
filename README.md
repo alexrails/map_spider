@@ -23,8 +23,8 @@ MapSpider is a Ruby console application that helps you collect and visualize loc
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/alexrails/map-spider.git
-cd mapspider
+git clone https://github.com/alexrails/map_spider.git
+cd map_spider
 ```
 
 2. Install dependencies:

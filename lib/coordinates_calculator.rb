@@ -9,7 +9,7 @@ class CoordinatesCalculator
     def calculate_sub_coordinates(coordinates, offset)
       lat = coordinates[:lat]
       lng = coordinates[:lng]
-      
+
       lat_rad = degrees_to_radians(lat)
       delta_lat = calculate_delta_lat(offset)
       delta_lng = calculate_delta_lng(offset, lat_rad)

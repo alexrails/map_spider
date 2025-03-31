@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'colorize'
+require "colorize"
 
 class Validator
   class << self
@@ -13,7 +13,7 @@ class Validator
     end
 
     def validate_radius(radius)
-      unless radius.to_i.between?(50, 50000)
+      unless radius.to_i.between?(50, 50_000)
         puts "✗ Radius must be between 50 and 50000 meters. Try again.".colorize(:red)
         return false
       end

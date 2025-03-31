@@ -1,26 +1,25 @@
 # frozen_string_literal: true
 
-require 'terminal-table'
-require 'ruby-progressbar'
-require 'colorize'
-require_relative 'validator'
-require_relative 'map_spider'
+require "terminal-table"
+require "ruby-progressbar"
+require "colorize"
+require_relative "validator"
+require_relative "map_spider"
 module Interface
   class UI
-    VERSION = '0.1.0'
-
     def self.display_banner
+      version ||= File.read(File.join(__dir__, "../.app_version")).strip
       puts %q{
- __  __              _____       _     _           
-|  \/  |            / ____|     (_)   | |          
-| \  / | __ _ _ __ | (___  _ __  _  __| | ___ _ __ 
+ __  __              _____       _     _
+|  \/  |            / ____|     (_)   | |
+| \  / | __ _ _ __ | (___  _ __  _  __| | ___ _ __
 | |\/| |/ _` | '_ \ \___ \| '_ \| |/ _` |/ _ \ '__|
-| |  | | (_| | |_) |____) | |_) | | (_| |  __/ |   
-|_|  |_|\__,_| .__/|_____/| .__/|_|\__,_|\___|_|   
-             | |          | |へ(⚈益⚈)へ            
-             |_|          |_|                       
+| |  | | (_| | |_) |____) | |_) | | (_| |  __/ |
+|_|  |_|\__,_| .__/|_____/| .__/|_|\__,_|\___|_|
+             | |          | |へ(⚈益⚈)へ
+             |_|          |_|
       }.colorize(:green)
-      puts "                      v#{VERSION}\n\n".colorize(:green)
+      puts "                      v#{version}\n\n".colorize(:green)
     end
 
     def self.coordinates
@@ -29,10 +28,10 @@ module Interface
       loop do
         puts "Enter coordinates (format: latitude,longitude) or 'done' to finish:"
         input = gets.chomp
-        break if input.downcase == 'done'
+        break if input.downcase == "done"
         next unless Validator.validate_coordinates(input)
 
-        lat, lng = input.split(',').map(&:strip)
+        lat, lng = input.split(",").map(&:strip)
         all_coordinates << { lat: lat.to_f, lng: lng.to_f }
         puts "✓ Coordinates added".colorize(:green)
       end
@@ -70,6 +69,7 @@ module Interface
       type = gets.chomp
 
       return nil if type.empty?
+
       puts "✓ Place type added".colorize(:green)
 
       type
@@ -77,23 +77,21 @@ module Interface
 
     def self.create_progress_bar(total_percentage)
       puts "\n\n"
-      
-      bar = ProgressBar.create(
-        title: 'Progress',
+
+      ProgressBar.create(
+        title: "Progress",
         total: total_percentage,
         length: 100,
         format: "%t |%B| %p%% | Speed: %R/sec",
-        progress_mark: '█',
-        remainder_mark: '░',
+        progress_mark: "█",
+        remainder_mark: "░",
         starting_at: 0,
         format_with_color: true,
         autostart: true,
         autofinish: true,
-        rate_scale: lambda { |rate| rate.round(2) },
+        rate_scale: ->(rate) { rate.round(2) },
         throttle_rate: 0.1
       )
-      
-      bar
     end
 
     def self.display_parameters(coordinates, radius, max_requests, place_type)
@@ -107,7 +105,7 @@ module Interface
         ]
         t.style = { width: 50, padding_left: 3, border_x: "=", border_i: "+" }
       end
-      
+
       puts "\n#{table}\n\n\n"
     end
 
@@ -123,19 +121,20 @@ module Interface
 
     def self.ask_to_show_map
       puts "\nDo you want to see the found places on the map? (y/n):".colorize(:cyan)
-      gets.chomp.downcase == 'y'
+      gets.chomp.downcase == "y"
     end
 
     def self.display_map_generated(filename)
       puts "\n✓ Map generated in file #{filename}".colorize(:green)
       puts "  Open this file in browser to view the map".colorize(:green)
-      
+
       # Попытка автоматически открыть карту в браузере
-      if RbConfig::CONFIG['host_os'] =~ /darwin/
+      case RbConfig::CONFIG["host_os"]
+      when /darwin/
         system("open #{filename}")
-      elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+      when /linux|bsd/
         system("xdg-open #{filename}")
-      elsif RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+      when /mswin|mingw|cygwin/
         system("start #{filename}")
       end
     end

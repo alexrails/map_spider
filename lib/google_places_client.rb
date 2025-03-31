@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'httparty'
-require 'retryable'
-require 'json'
-require 'uri'
-require_relative 'map_spider'
-require_relative 'logger'
+require "httparty"
+require "retryable"
+require "json"
+require "uri"
+require_relative "map_spider"
+require_relative "logger"
 
 class GooglePlacesClient
   attr_reader :requests_counter
@@ -21,7 +21,7 @@ class GooglePlacesClient
     "places.primaryType",
     "places.googleMapsUri",
     "places.plusCode"
-  ].join(',')
+  ].join(",")
 
   RETRYABLE_ERRORS = [Net::OpenTimeout, HTTParty::Error, Resolv::ResolvError].freeze
   RETRY_OPTIONS = {
@@ -39,7 +39,7 @@ class GooglePlacesClient
     response = make_request(":searchNearby", build_body(coordinates, radius, type))
 
     response[:places] || []
-  rescue => e
+  rescue StandardError => e
     Interface::UI.display_error("API Error in coordinates: #{coordinates[:lat]}, #{coordinates[:lng]} - #{e.message}")
     logger.error("API Error during coordinates: (#{coordinates[:lat]}, #{coordinates[:lng]}) - #{e.message}")
     []
@@ -71,9 +71,9 @@ class GooglePlacesClient
         "#{BASE_URL}#{path}",
         body: body.to_json,
         headers: {
-          'Content-Type' => 'application/json',
-          'X-Goog-Api-Key' => @api_key,
-          'X-Goog-FieldMask' => FIELDS
+          "Content-Type" => "application/json",
+          "X-Goog-Api-Key" => @api_key,
+          "X-Goog-FieldMask" => FIELDS
         }
       )
       @requests_counter += 1

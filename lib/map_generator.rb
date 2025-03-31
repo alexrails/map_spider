@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'csv'
-require 'json'
-require 'fileutils'
-require_relative 'logger'
+require "csv"
+require "json"
+require "fileutils"
+require_relative "logger"
 
 class MapGenerator
   HTML_TEMPLATE = <<~HTML
@@ -18,7 +18,7 @@ class MapGenerator
         <style>
             #map { height: 95vh; width: 100%%; }
             body { margin: 0; padding: 0; }
-            .map-controls { 
+            .map-controls {#{' '}
                 padding: 10px;
                 background: white;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -37,7 +37,7 @@ class MapGenerator
         <script>
             const map = L.map('map');
             let currentLayer;
-            
+    #{'        '}
             const layers = {
                 osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
@@ -64,7 +64,7 @@ class MapGenerator
 
             const markers = %s;
             const bounds = L.latLngBounds();
-            
+    #{'        '}
             markers.forEach(marker => {
                 const [lat, lng] = marker.location.split(',').map(Number);
                 bounds.extend([lat, lng]);
@@ -72,7 +72,7 @@ class MapGenerator
                  .bindPopup('<b>' + marker.name + '</b><br>' + marker.address)
                  .addTo(map);
             });
-            
+    #{'        '}
             map.fitBounds(bounds);
         </script>
     </body>
@@ -80,28 +80,28 @@ class MapGenerator
   HTML
 
   def self.generate(csv_file)
-    FileUtils.mkdir_p('results/html')
+    FileUtils.mkdir_p("results/html")
     filename = "results/html/places_#{Time.now.strftime('%Y%m%d_%H%M%S')}.html"
-    
-    places = CSV.read(csv_file, headers: true).map do |row|
-      next unless row["Coordinates"]
 
-      name = row['Name'] || 'Unknown Place'
-      location = row['Coordinates']
-      address = row['Address'] || 'No address'
-
-      {
-        name: name,
-        location: location,
-        address: address
-      }
-    end.compact
-
-    valid_places = places.select { |place| place[:location]&.include?(',') }
+    valid_places = process_places(csv_file)
     html_content = format(HTML_TEMPLATE, valid_places.to_json)
 
     File.write(filename, html_content)
     MapSpiderLogger.log_info("Generated HTML map #{filename} with #{valid_places.size} places")
     filename
+  end
+
+  def self.process_places(csv_file)
+    places = CSV.read(csv_file, headers: true).filter_map do |row|
+      next unless row["Coordinates"]
+
+      {
+        name: row["Name"] || "Unknown Place",
+        location: row["Coordinates"],
+        address: row["Address"] || "No address"
+      }
+    end
+
+    places.select { |place| place[:location]&.include?(",") }
   end
 end

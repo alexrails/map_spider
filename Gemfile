@@ -1,22 +1,36 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
-#HTTP
+# HTTP
 gem "httparty"
 gem "retryable"
 
-#ENV
+# ENV
 gem "dotenv"
 
-#CSV
+# CSV
 gem "csv"
 
-#CLI
+# CLI
 gem "thor"
 
-#UI
-gem 'colorize'
-gem 'terminal-table'
-gem 'ruby-progressbar'
+# UI
+gem "colorize"
+gem "ruby-progressbar"
+gem "terminal-table"
 
-#DEBUG
+# DEBUG
 gem "pry-byebug"
+
+group :test do
+  gem "rspec"
+  gem "rspec-mocks"
+  gem "webmock"
+end
+
+group :development, :test do
+  gem "rubocop", require: false
+  gem "rubocop-performance", require: false
+  gem "rubocop-rspec", require: false
+end

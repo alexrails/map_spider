@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'logger'
-require 'fileutils'
+require "logger"
+require "fileutils"
 
 module MapSpiderLogger
   class << self
@@ -20,9 +20,9 @@ module MapSpiderLogger
     private
 
     def create_logger
-      FileUtils.mkdir_p('logs')
-      logger = Logger.new('logs/mapspider.log', 'weekly')
-      logger.formatter = proc do |severity, datetime, progname, msg|
+      FileUtils.mkdir_p("logs")
+      logger = Logger.new("logs/mapspider.log", "weekly")
+      logger.formatter = proc do |severity, datetime, _progname, msg|
         date_format = datetime.strftime("%Y-%m-%d %H:%M:%S")
         "[#{date_format}] #{severity}: #{msg}\n"
       end
