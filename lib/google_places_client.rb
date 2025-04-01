@@ -23,7 +23,7 @@ class GooglePlacesClient
     "places.plusCode"
   ].join(",")
 
-  RETRYABLE_ERRORS = [Net::OpenTimeout, HTTParty::Error, Resolv::ResolvError].freeze
+  RETRYABLE_ERRORS = [Net::OpenTimeout, HTTParty::Error].freeze
   RETRY_OPTIONS = {
     tries: 3,
     sleep: 1,
