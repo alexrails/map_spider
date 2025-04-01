@@ -19,7 +19,7 @@ module Interface
              | |          | |へ(⚈益⚈)へ
              |_|          |_|
       }.colorize(:green)
-      puts "                      v#{version}\n\n".colorize(:green)
+      puts "                      #{version}\n\n".colorize(:green)
     end
 
     def self.coordinates
