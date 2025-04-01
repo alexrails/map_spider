@@ -156,5 +156,12 @@ RSpec.describe MapSpider do
         expect(map_spider.send(:scanned_percentage)).to eq(100)
       end
     end
+
+    describe "#radius_stats" do
+      it "updates radius stats correctly" do
+        map_spider.send(:radius_stats, 10, 5)
+        expect(map_spider.instance_variable_get(:@radius_stats)).to eq({ 10 => 5 })
+      end
+    end
   end
 end

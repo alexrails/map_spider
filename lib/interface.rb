@@ -119,7 +119,7 @@ module Interface
     end
 
     def self.ask_to_show_map
-      puts "\nDo you want to see the found places on the map? (y/n):".colorize(:cyan)
+      puts "\nDo you want to see the found places on the map? (y/n):"
       gets.chomp.downcase == "y"
     end
 
@@ -140,6 +140,14 @@ module Interface
 
     def self.display_stop_scan_message
       puts "\nMaximum number of requests reached. Scan stopped".colorize(:yellow)
+    end
+
+    def self.display_radius_stats(stats)
+      return if stats.empty?
+
+      stats.each do |radius, count|
+        puts "✓ Radius: #{radius}m, Places found: #{count}".colorize(:green)
+      end
     end
 
     def self.update_status_line(radius, coordinates, requests, index) # rubocop:disable Metrics/AbcSize

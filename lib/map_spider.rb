@@ -18,6 +18,7 @@ class MapSpider
   def initialize
     @client = GooglePlacesClient.new(ENV.fetch("GOOGLE_MAPS_API_KEY", nil))
     @all_places = []
+    @radius_stats = {}
   end
 
   def start # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
@@ -41,6 +42,7 @@ class MapSpider
 
     remove_duplicates
     save_to_csv(@all_places)
+    Interface::UI.display_radius_stats(@radius_stats)
     show_map(@filename) if Interface::UI.ask_to_show_map
   end
 
@@ -72,6 +74,7 @@ class MapSpider
       @all_places.concat(places)
       @scanned_area += area_size(square_size)
       progressbar.progress = scanned_percentage
+      radius_stats(radius.round(2), places.count)
     end
   end
 
@@ -113,6 +116,11 @@ class MapSpider
 
   def progressbar
     @progressbar ||= Interface::UI.create_progress_bar(100)
+  end
+
+  def radius_stats(radius, places_count)
+    @radius_stats[radius] ||= 0
+    @radius_stats[radius] += places_count
   end
 
   def logger
