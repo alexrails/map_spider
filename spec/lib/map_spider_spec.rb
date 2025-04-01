@@ -10,7 +10,7 @@ RSpec.describe MapSpider do
 
   before do
     allow(GooglePlacesClient).to receive(:new).and_return(mock_client)
-    allow(ENV).to receive(:[]).with("GOOGLE_MAPS_API_KEY").and_return(api_key)
+    allow(ENV).to receive(:fetch).with("GOOGLE_MAPS_API_KEY", nil).and_return(api_key)
 
     allow(Interface::UI).to receive(:display_banner)
     allow(Interface::UI).to receive(:display_parameters)
@@ -37,7 +37,7 @@ RSpec.describe MapSpider do
     it "creates a new GooglePlacesClient with the API key" do
       allow(GooglePlacesClient).to receive(:new).and_return(mock_client)
       described_class.new
-      expect(GooglePlacesClient).to have_received(:new).with("AIzaSyC2EZJvFdir2b5VNpmM0uM5dd6b-97h6_c")
+      expect(GooglePlacesClient).to have_received(:new).with(api_key)
     end
 
     it "initializes empty places array" do
