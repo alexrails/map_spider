@@ -7,7 +7,7 @@ require "colorize"
 require_relative "csv_generator"
 require_relative "coordinates_calculator"
 require_relative "logger"
-
+require "pry"
 class MapSpider
   MINIMAL_RADIUS = 15
   DEFAULT_MAX_REQUESTS = 100
@@ -20,7 +20,7 @@ class MapSpider
     @all_places = []
   end
 
-  def start # rubocop:disable Metrics/AbcSize
+  def start # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     Interface::UI.display_banner
     logger.info("Application started")
 
@@ -31,9 +31,11 @@ class MapSpider
     @total_area = area_size(radius).to_f
 
     Interface::UI.display_parameters(coordinates, radius, @max_requests, @place_type)
+    progressbar
 
-    coordinates.each_with_index do |coord, _index|
+    coordinates.each_with_index do |coord, index|
       @scanned_area = 0
+      @index = index
       catch_places(coord, radius, radius)
     end
 
@@ -48,7 +50,7 @@ class MapSpider
     return if @stop_scan
     return stop_scan if requests_counter >= @max_requests
 
-    Interface::UI.update_status_line(radius, coordinates)
+    Interface::UI.update_status_line(radius, coordinates, requests_counter, @index)
 
     places = @client.places_nearby(coordinates, radius, @place_type)
 
