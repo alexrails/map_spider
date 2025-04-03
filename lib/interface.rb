@@ -3,6 +3,7 @@
 require "terminal-table"
 require "ruby-progressbar"
 require "colorize"
+require "io/console"
 require_relative "validator"
 require_relative "map_spider"
 module Interface
@@ -151,15 +152,24 @@ module Interface
     end
 
     def self.update_status_line(radius, coordinates, requests, index) # rubocop:disable Metrics/AbcSize
-      print "\e[s" # Save cursor position
-      print "\e[2A" # Move up 2 lines
-      print "\r\033[K" # Clear line and move to start
       status = "Rad: ".colorize(:cyan) + "#{radius.round(2)}m".colorize(:yellow) +
                " | Req: ".colorize(:cyan) + requests.to_s.colorize(:yellow) +
                " | Point: ".colorize(:cyan) + (index + 1).to_s.colorize(:yellow) +
                " | Loc: ".colorize(:cyan) + "(#{coordinates[:lat].round(6)}, #{coordinates[:lng].round(6)})".colorize(:yellow)
-      print status
-      print "\e[u" # Restore cursor position
+
+      # Определяем, на какой ОС мы работаем
+      if /mswin|mingw|cygwin/.match?(RbConfig::CONFIG["host_os"])
+        # В Windows используем более простой подход
+        $stdout.write("\r#{status.ljust(120)}")
+        $stdout.flush
+      else
+        # ANSI-последовательности для Unix-подобных систем
+        print "\e[s" # Save cursor position
+        print "\e[2A" # Move up 2 lines
+        print "\r\033[K" # Clear line and move to start
+        print status
+        print "\e[u" # Restore cursor position
+      end
     end
   end
 end

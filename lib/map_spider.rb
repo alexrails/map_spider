@@ -8,6 +8,7 @@ require_relative "csv_generator"
 require_relative "coordinates_calculator"
 require_relative "logger"
 require "pry"
+
 class MapSpider
   MINIMAL_RADIUS = 15
   DEFAULT_MAX_REQUESTS = 100
