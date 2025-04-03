@@ -53,7 +53,7 @@ class MapSpider
     return if @stop_scan
     return stop_scan if requests_counter >= @max_requests
 
-    Interface::UI.update_status_line(radius, coordinates, requests_counter, @index)
+    # Interface::UI.update_status_line(radius, coordinates, requests_counter, @index)
 
     places = @client.places_nearby(coordinates, radius, @place_type)
 
